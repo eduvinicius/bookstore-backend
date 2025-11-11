@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Bookstore.Api.Data;
-using Bookstore.Models;
+using Bookstore.Services.Interfaces;
+using Bookstore.Api.Models;
+using Bookstore.Api.DTOs;
 
 namespace Bookstore.Controllers
 {
@@ -9,49 +11,46 @@ namespace Bookstore.Controllers
     [Route("api/[controller]")]
     public class BooksController: ControllerBase
     {
-        private readonly BookstoreContext _context;
+        private readonly IBookService _bookService;
 
-        public BooksController(BookstoreContext context)
+        public BooksController(IBookService bookService)
         {
-            _context = context;
+            _bookService = bookService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
-            return await _context.Books.ToListAsync();
+            var books = await _bookService.GetAllBooksAsync();
+            return Ok(books);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _bookService.GetBookByIdAsync(id);
+
             if (book == null)
                 return NotFound();
 
-            return book;
+            return Ok(book);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Book>> CreateBook(Book book)
+        public async Task<ActionResult<Book>> CreateBook(CreateBookDto book)
         {
-            book.CreatedDate = DateTime.UtcNow;
-            book.UpdatedDate = DateTime.UtcNow;
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
+            await _bookService.CreateBookAsync(book);
 
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, Book book)
+        public async Task<IActionResult> UpdateBook(int id, UpdateBookDto book)
         {
             if (id != book.Id)
                 return BadRequest();
 
-            book.UpdatedDate = DateTime.UtcNow;
-            _context.Entry(book).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _bookService.UpdateBookAsync(id, book);
 
             return NoContent();
         }
@@ -59,12 +58,10 @@ namespace Bookstore.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
-            if (book == null)
-                return NotFound();
+            var isDeleted = await _bookService.DeleteBookAsync(id);
 
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
+            if (!isDeleted)
+                return NotFound();
 
             return NoContent();
         }

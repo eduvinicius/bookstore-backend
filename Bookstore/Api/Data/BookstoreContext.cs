@@ -1,4 +1,4 @@
-﻿using Bookstore.Models;
+﻿using Bookstore.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Api.Data
@@ -11,5 +11,6 @@ namespace Bookstore.Api.Data
         }
 
         public DbSet<Book> Books { get; set; } = null!;
+        public DbSet<Bookcase> Bookcases { get; set; } = null!;
     }
 }
