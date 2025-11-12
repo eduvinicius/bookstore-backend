@@ -24,7 +24,8 @@ namespace Bookstore.Services
 
         public async Task<Book> CreateBookAsync(CreateBookDto dto)
         {
-            var book = _mapper.Map<Book>(dto);
+            var book = new Book();
+            _mapper.Map(dto, book);
 
             await _bookRepository.AddAsync(book);
             await _bookRepository.SaveChangesAsync();
@@ -41,10 +42,8 @@ namespace Bookstore.Services
 
         public async Task<Book> UpdateBookAsync(int id, UpdateBookDto dto)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
-
-            if (book == null)
-                throw new KeyNotFoundException($"Book with ID {id} not found.");
+            var book = await _bookRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Book with ID {id} not found.");
+                
 
             _mapper.Map(dto, book);
             _bookRepository.Update(book);

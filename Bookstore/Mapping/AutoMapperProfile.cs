@@ -8,22 +8,26 @@ namespace Bookstore.Mapping
     {
         public AutoMapperProfile()
         {
-            // CreateBookDto -> Book
-            CreateMap<CreateBookDto, Book>()
-                // set CreatedDate/UpdatedDate automatically at mapping time
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
-                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(_ => DateTime.UtcNow));
 
-            // Book -> BookDto
-            CreateMap<Book, BookDto>();
-
-            // (Optional) If you need reverse mapping for updates:
             CreateMap<CreateBookDto, Book>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(_ => DateTime.Now))
+                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(_ => DateTime.Now))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<Book, BookDto>();
 
             CreateMap<UpdateBookDto, Book>()
                 .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<CreateBookcaseDto, Bookcase>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(_ => DateTime.Now));
+
+            CreateMap<UpdateBookcaseDto, Bookcase>()
+                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
 
         }
     }

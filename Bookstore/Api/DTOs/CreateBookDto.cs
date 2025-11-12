@@ -12,6 +12,8 @@ namespace Bookstore.Api.DTOs
         public bool IsRead { get; set; }
         public int? PageCount { get; set; }
         public string? Language { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
         public DateOnly? ReadDate { get; set; }
         public DateOnly? StartedReadingDate { get; set; }
         public double? Rating { get; set; }
