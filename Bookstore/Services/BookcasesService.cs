@@ -18,9 +18,9 @@ namespace Bookstore.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Bookcase>> GetAllBookcasesAsync()
+        public async Task<IEnumerable<Bookcase>> GetAllBookcasesAsync(int page, int pageSize)
         {
-            return await _bookcaseRepository.GetAllAsync();
+            return await _bookcaseRepository.GetAllAsync(page, pageSize);
         }
 
         public async Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto)
@@ -41,9 +41,9 @@ namespace Bookstore.Services
             return bookcase ?? throw new KeyNotFoundException($"Bookcase with ID {id} not found.");
         }
 
-        public async Task<Bookcase> UpdateBookcaseAsync(int id, UpdateBookcaseDto dto)
+        public async Task<Bookcase> UpdateBookcaseAsync(UpdateBookcaseDto dto)
         {
-            var bookcase = await _bookcaseRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Book with ID {id} not found.");
+            var bookcase = await _bookcaseRepository.GetByIdAsync(dto.Id) ?? throw new KeyNotFoundException($"Book with ID {dto.Id} not found.");
 
 
             _mapper.Map(dto, bookcase);

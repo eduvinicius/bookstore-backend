@@ -1,34 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Bookstore.Api.Data;
+﻿using Bookstore.Api.DTOs;
 using Bookstore.Api.Models;
+using Bookstore.Services;
+using Bookstore.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class BookcasesController: ControllerBase
+    [Route("api/[controller]")]
+    public class BookcasesController(IBookcasesService bookcasesService) : ControllerBase
     {
-        private readonly BookstoreContext _context;
-        public BookcasesController(BookstoreContext context)
-        {
-            _context = context;
-        }
+        private readonly IBookcasesService _bookcasesService = bookcasesService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bookcase>>> GetBookcases()
+        public async Task<ActionResult<IEnumerable<Bookcase>>> GetBookcases(int page = 1, int pageSize = 10)
         {
-            return await _context.Bookcases
-                .Include(b => b.Books)
-                .ToListAsync();
+            var bookcases = await _bookcasesService.GetAllBookcasesAsync(page, pageSize);
+
+            if (!bookcases.Any())
+                return NotFound();
+
+            return Ok(bookcases);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Bookcase>> GetBookcase(int id)
         {
-            var bookcase = await _context.Bookcases
-                .Include(b => b.Books)
-                .FirstOrDefaultAsync(b => b.Id == id);
+            var bookcase = await _bookcasesService.GetBookcaseByIdAsync(id);
 
             if (bookcase == null)
                 return NotFound();
@@ -37,22 +36,18 @@ namespace Bookstore.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Bookcase>> CreateBookcase(Bookcase bookcase)
+        public async Task<ActionResult<Bookcase>> CreateBookcase(CreateBookcaseDto bookcase)
         {
-            _context.Bookcases.Add(bookcase);
-            await _context.SaveChangesAsync();
+            await _bookcasesService.CreateBookcaseAsync(bookcase);
 
             return CreatedAtAction(nameof(GetBookcase), new { id = bookcase.Id }, bookcase);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBookcase(int id, Bookcase bookcase)
+        [HttpPut]
+        public async Task<IActionResult> UpdateBookcase(UpdateBookcaseDto bookcase)
         {
-            if (id != bookcase.Id)
-                return BadRequest();
 
-            _context.Entry(bookcase).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _bookcasesService.UpdateBookcaseAsync(bookcase);
 
             return NoContent();
         }
@@ -60,12 +55,10 @@ namespace Bookstore.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookcase(int id)
         {
-            var bookcase = await _context.Bookcases.FindAsync(id);
-            if (bookcase == null)
-                return NotFound();
+            var isDeleted = await _bookcasesService.DeleteBookcaseAsync(id);
 
-            _context.Bookcases.Remove(bookcase);
-            await _context.SaveChangesAsync();
+            if (!isDeleted)
+                return NotFound();
 
             return NoContent();
         }

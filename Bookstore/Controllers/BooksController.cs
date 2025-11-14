@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Bookstore.Api.Data;
 using Bookstore.Services.Interfaces;
 using Bookstore.Api.Models;
 using Bookstore.Api.DTOs;
@@ -9,19 +7,18 @@ namespace Bookstore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BooksController: ControllerBase
+    public class BooksController(IBookService bookService) : ControllerBase
     {
-        private readonly IBookService _bookService;
-
-        public BooksController(IBookService bookService)
-        {
-            _bookService = bookService;
-        }
+        private readonly IBookService _bookService = bookService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<Book>>> GetBooks(int page = 1, int pageSize = 10)
         {
-            var books = await _bookService.GetAllBooksAsync();
+            var books = await _bookService.GetAllBooksAsync(page, pageSize);
+
+            if (!books.Any())
+                return NotFound();
+
             return Ok(books);
         }
 
@@ -44,13 +41,11 @@ namespace Bookstore.Controllers
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, UpdateBookDto book)
+        [HttpPut]
+        public async Task<IActionResult> UpdateBook(UpdateBookDto book)
         {
-            if (id != book.Id)
-                return BadRequest();
 
-            await _bookService.UpdateBookAsync(id, book);
+            await _bookService.UpdateBookAsync(book);
 
             return NoContent();
         }

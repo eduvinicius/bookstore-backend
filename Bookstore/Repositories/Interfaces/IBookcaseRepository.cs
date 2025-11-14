@@ -6,7 +6,7 @@ namespace Bookstore.Repositories.Interfaces
     {
         Task AddAsync(Bookcase bookcase);
         Task<Bookcase?> GetByIdAsync(int id);
-        Task<IEnumerable<Bookcase>> GetAllAsync();
+        Task<IEnumerable<Bookcase>> GetAllAsync(int skip, int take);
         void Update(Bookcase bookcase);
         void Delete(Bookcase bookcase);
         Task SaveChangesAsync();

@@ -1,9 +1,12 @@
-﻿using Bookstore.Api.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Bookstore.Api.Models;
 
 namespace Bookstore.Api.DTOs
 {
     public class UpdateBookcaseDto
     {
+        [Required]
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Location { get; set; }
         public List<Book> Books { get; set; } = [];

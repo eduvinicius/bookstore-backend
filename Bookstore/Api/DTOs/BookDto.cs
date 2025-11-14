@@ -18,7 +18,6 @@ namespace Bookstore.Api.DTOs
         public DateOnly? StartedReadingDate { get; set; }
         public double? Rating { get; set; }
         public string? Description { get; set; }
-        public int? BookcaseId { get; set; }
         public Bookcase? Bookcase { get; set; }
     }
 

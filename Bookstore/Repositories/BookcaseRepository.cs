@@ -26,10 +26,13 @@ namespace Bookstore.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<IEnumerable<Bookcase>> GetAllAsync()
+        public async Task<IEnumerable<Bookcase>> GetAllAsync(int skip, int take)
         {
             return await _context.Bookcases
                 .Include(b => b.Books)
+                .OrderBy(b => b.Id)
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync();
         }
 
