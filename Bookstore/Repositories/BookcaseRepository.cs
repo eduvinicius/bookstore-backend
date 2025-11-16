@@ -22,17 +22,17 @@ namespace Bookstore.Repositories
         public async Task<Bookcase?> GetByIdAsync(int id)
         {
             return await _context.Bookcases
-                .Include(b => b.Books)
+                .Include(bc => bc.Books)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task<IEnumerable<Bookcase>> GetAllAsync(int skip, int take)
         {
             return await _context.Bookcases
-                .Include(b => b.Books)
-                .OrderBy(b => b.Id)
+                .OrderBy(bc => bc.Id)
                 .Skip(skip)
                 .Take(take)
+                .Include(bc => bc.Books)
                 .ToListAsync();
         }
 

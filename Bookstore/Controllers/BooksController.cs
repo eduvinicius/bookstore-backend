@@ -33,6 +33,14 @@ namespace Bookstore.Controllers
             return Ok(book);
         }
 
+        [HttpGet("unassigned")]
+        public async Task<ActionResult<IEnumerable<Book>>> GetUnassignedBooks()
+        {
+            var books = await _bookService.GetUnassignedBooksAsync();
+
+            return Ok(books);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Book>> CreateBook(CreateBookDto book)
         {

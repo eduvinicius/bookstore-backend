@@ -18,7 +18,6 @@
         public string? Description { get; set; }
 
         public int? BookcaseId { get; set; }
-        public Bookcase? Bookcase { get; set; }
         //public IList<Tag> Tags { get; set; } = new List<Tag>();
     }
 }

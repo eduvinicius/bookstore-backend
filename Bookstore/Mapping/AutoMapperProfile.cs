@@ -22,7 +22,8 @@ namespace Bookstore.Mapping
 
             CreateMap<CreateBookcaseDto, Bookcase>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(_ => DateTime.Now));
+                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(_ => DateTime.Now))
+                .ForMember(dest => dest.Books, opt => opt.Ignore());
 
             CreateMap<UpdateBookcaseDto, Bookcase>()
                 .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.Now))

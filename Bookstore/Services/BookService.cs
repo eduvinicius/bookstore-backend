@@ -22,6 +22,18 @@ namespace Bookstore.Services
             return await _bookRepository.GetAllAsync(page, pageSize);
         }
 
+        public async Task<Book> GetBookByIdAsync(int id)
+        {
+            var book = await _bookRepository.GetByIdAsync(id);
+
+            return book ?? throw new KeyNotFoundException($"Book with ID {id} not found.");
+        }
+
+        public async Task<IEnumerable<Book>> GetUnassignedBooksAsync()
+        {
+            return await _bookRepository.GetUnassignedBooksAsync();
+        }
+
         public async Task<Book> CreateBookAsync(CreateBookDto dto)
         {
             var book = new Book();
@@ -31,13 +43,6 @@ namespace Bookstore.Services
             await _bookRepository.SaveChangesAsync();
 
             return book;
-        }
-
-        public async Task<Book> GetBookByIdAsync(int id)
-        {
-            var book = await _bookRepository.GetByIdAsync(id);
-
-            return book ?? throw new KeyNotFoundException($"Book with ID {id} not found.");
         }
 
         public async Task<Book> UpdateBookAsync(UpdateBookDto dto)

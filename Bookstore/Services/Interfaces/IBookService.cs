@@ -10,5 +10,6 @@ namespace Bookstore.Services.Interfaces
         Task<bool> DeleteBookAsync(int id);
         Task<Book> GetBookByIdAsync(int id);
         Task<IEnumerable<Book>> GetAllBooksAsync(int page, int pageSize);
+        Task<IEnumerable<Book>> GetUnassignedBooksAsync();
     }
 }

@@ -22,19 +22,39 @@ namespace Bookstore.Repositories
         public async Task<Book?> GetByIdAsync(int id)
         {
             return await _context.Books
-                .Include(b => b.Bookcase)
                 .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
+        public async Task<IEnumerable<Book>> GetByBookcaseIdAsync(int id)
+        {
+            return await _context.Books
+                .Where(b => b.BookcaseId == id)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetAllAsync(int skip, int take)
         {
             return await _context.Books
-                .Include(b => b.Bookcase)
                 .OrderBy(b => b.Id)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Book>> GetUnassignedBooksAsync()
+        {
+            return await _context.Books
+                .Where(b => b.BookcaseId == null)
+                .ToListAsync();
+        }
+
+        public async Task<List<Book>> GetByIdsListAsync(List<int> ids)
+        {
+            return await _context.Books
+                .Where(b => ids.Contains(b.Id))
+                .ToListAsync();
+        }
+
 
         public void Update(Book book)
         {

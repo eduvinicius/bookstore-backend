@@ -9,6 +9,6 @@ namespace Bookstore.Api.DTOs
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Location { get; set; }
-        public List<Book> Books { get; set; } = [];
+        public List<int> BookIds { get; set; } = [];
     }
 }
