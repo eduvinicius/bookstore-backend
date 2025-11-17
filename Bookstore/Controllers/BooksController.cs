@@ -12,7 +12,7 @@ namespace Bookstore.Controllers
         private readonly IBookService _bookService = bookService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks(int page = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks(int page = 1, int pageSize = 10)
         {
             var books = await _bookService.GetAllBooksAsync(page, pageSize);
 
@@ -23,7 +23,7 @@ namespace Bookstore.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<BookDto>> GetBook(int id)
         {
             var book = await _bookService.GetBookByIdAsync(id);
 
@@ -34,7 +34,7 @@ namespace Bookstore.Controllers
         }
 
         [HttpGet("unassigned")]
-        public async Task<ActionResult<IEnumerable<Book>>> GetUnassignedBooks()
+        public async Task<ActionResult<IEnumerable<BookDto>>> GetUnassignedBooks()
         {
             var books = await _bookService.GetUnassignedBooksAsync();
 

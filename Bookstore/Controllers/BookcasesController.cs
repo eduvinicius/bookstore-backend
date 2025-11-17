@@ -14,12 +14,13 @@ namespace Bookstore.Controllers
         private readonly IBookcasesService _bookcasesService = bookcasesService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bookcase>>> GetBookcases(int page = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<Bookcase>>> GetBookcases(int page = 0, int pageSize = 10)
         {
+
             var bookcases = await _bookcasesService.GetAllBookcasesAsync(page, pageSize);
 
             if (!bookcases.Any())
-                return NotFound();
+                return NotFound("We could not find any bookcase registered");
 
             return Ok(bookcases);
         }
@@ -30,7 +31,7 @@ namespace Bookstore.Controllers
             var bookcase = await _bookcasesService.GetBookcaseByIdAsync(id);
 
             if (bookcase == null)
-                return NotFound();
+                return NotFound("We could not find the bookcase");
 
             return bookcase;
         }
@@ -58,7 +59,7 @@ namespace Bookstore.Controllers
             var isDeleted = await _bookcasesService.DeleteBookcaseAsync(id);
 
             if (!isDeleted)
-                return NotFound();
+                return NotFound("We could not find the bookcase");
 
             return NoContent();
         }

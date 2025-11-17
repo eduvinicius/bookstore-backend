@@ -23,24 +23,22 @@ namespace Bookstore.Services
         {
             var bookcase = _mapper.Map<Bookcase>(dto);
 
-            await _bookcaseRepository.AddAsync(bookcase);
-            await _bookcaseRepository.SaveChangesAsync();
-
             if (dto.BookIds?.Count > 0)
             {
-                foreach (var bookId in dto.BookIds)
+                var books = await _bookRepository.GetByIdsListAsync(dto.BookIds);
+
+                foreach (var book in books)
                 {
-                    var book = await _bookRepository.GetByIdAsync(bookId) ?? throw new Exception($"Book {bookId} not found.");
 
                     if (book.BookcaseId != null)
-                        throw new Exception($"Book {bookId} is already in another bookcase.");
-
-                    book.BookcaseId = bookcase.Id;
-                    _bookRepository.Update(book);
+                        throw new Exception($"Book {book.Id} is already in another bookcase.");
                 }
 
-                await _bookRepository.SaveChangesAsync();
+                bookcase.Books = books;
             }
+
+            await _bookcaseRepository.AddAsync(bookcase);
+            await _bookcaseRepository.SaveChangesAsync();
 
             return bookcase;
         }
@@ -56,29 +54,11 @@ namespace Bookstore.Services
         {
             var bookcase = await _bookcaseRepository.GetByIdAsync(dto.Id) ?? throw new KeyNotFoundException($"Book with ID {dto.Id} not found.");
 
-
             _mapper.Map(dto, bookcase);
 
-            var currentBookIds = bookcase.Books.Select(b => b.Id).ToList();
-            var booksToAddIds = dto.BookIds.Except(currentBookIds).ToList();
-            var booksToRemoveIds = currentBookIds.Except(dto.BookIds).ToList();
+            var books = await _bookRepository.GetByIdsListAsync(dto.BookIds);
 
-            if (booksToAddIds.Count != 0)
-            {
-                var booksToAdd = await _bookRepository.GetByIdsListAsync(booksToAddIds);
-
-                foreach (var book in booksToAdd)
-                    book.BookcaseId = bookcase.Id;
-            }
-
-            if (booksToRemoveIds.Count != 0)
-            {
-                var booksToRemove = await _bookRepository.GetByIdsListAsync(booksToRemoveIds);
-
-                foreach (var book in booksToRemove)
-                    book.BookcaseId = null;
-            }
-
+            bookcase.Books = books;
 
             _bookcaseRepository.Update(bookcase);
             await _bookcaseRepository.SaveChangesAsync();
@@ -93,13 +73,6 @@ namespace Bookstore.Services
             {
                 return false;
             }
-
-            var books = await _bookRepository.GetByBookcaseIdAsync(id);
-
-            foreach (var book in books)
-                book.BookcaseId = null;
-
-            await _bookRepository.SaveChangesAsync();
 
             _bookcaseRepository.Delete(bookcase);
             await _bookcaseRepository.SaveChangesAsync();
