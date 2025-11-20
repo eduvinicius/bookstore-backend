@@ -8,8 +8,8 @@ namespace Bookstore.Services.Interfaces
         Task<Book> CreateBookAsync(CreateBookDto dto);
         Task<Book> UpdateBookAsync(UpdateBookDto dto);
         Task<bool> DeleteBookAsync(int id);
-        Task<Book> GetBookByIdAsync(int id);
-        Task<IEnumerable<Book>> GetAllBooksAsync(int page, int pageSize);
-        Task<IEnumerable<Book>> GetUnassignedBooksAsync();
+        Task<BookDto> GetBookByIdAsync(int id);
+        Task<IEnumerable<BookDto>> GetAllBooksAsync(int page, int pageSize);
+        Task<IEnumerable<BookDto>> GetUnassignedBooksAsync();
     }
 }

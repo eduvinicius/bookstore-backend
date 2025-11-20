@@ -1,5 +1,6 @@
 ﻿using Bookstore.Api.Data;
 using Bookstore.Api.Models;
+using Bookstore.Api.DTOs;
 using Bookstore.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,7 @@ namespace Bookstore.Repositories
         public async Task<Book?> GetByIdAsync(int id)
         {
             return await _context.Books
+                .Include(b => b.Bookcase)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
@@ -29,6 +31,7 @@ namespace Bookstore.Repositories
         {
             return await _context.Books
                 .Where(b => b.BookcaseId == id)
+                .Include(b => b.Bookcase)
                 .ToListAsync();
         }
 
@@ -38,6 +41,7 @@ namespace Bookstore.Repositories
                 .OrderBy(b => b.Id)
                 .Skip(skip)
                 .Take(take)
+                .Include(b => b.Bookcase)
                 .ToListAsync();
         }
 
@@ -45,6 +49,7 @@ namespace Bookstore.Repositories
         {
             return await _context.Books
                 .Where(b => b.BookcaseId == null)
+                .Include(b => b.Bookcase)
                 .ToListAsync();
         }
 
@@ -52,6 +57,7 @@ namespace Bookstore.Repositories
         {
             return await _context.Books
                 .Where(b => ids.Contains(b.Id))
+                .Include(b => b.Bookcase)
                 .ToListAsync();
         }
 

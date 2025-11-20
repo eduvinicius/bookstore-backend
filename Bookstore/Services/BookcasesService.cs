@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using Bookstore.Api.DTOs;
 using Bookstore.Api.Models;
-using Bookstore.Repositories;
 using Bookstore.Repositories.Interfaces;
 using Bookstore.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Services
 {
@@ -14,9 +12,10 @@ namespace Bookstore.Services
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<IEnumerable<Bookcase>> GetAllBookcasesAsync(int page, int pageSize)
+        public async Task<IEnumerable<BookcaseDto>> GetAllBookcasesAsync(int page, int pageSize)
         {
-            return await _bookcaseRepository.GetAllAsync(page, pageSize);
+            var books = await _bookcaseRepository.GetAllAsync(page, pageSize);
+            return books.Select(bookcase => _mapper.Map<BookcaseDto>(bookcase));
         }
 
         public async Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto)
@@ -43,11 +42,11 @@ namespace Bookstore.Services
             return bookcase;
         }
 
-        public async Task<Bookcase> GetBookcaseByIdAsync(int id)
+        public async Task<BookcaseDto> GetBookcaseByIdAsync(int id)
         {
             var bookcase = await _bookcaseRepository.GetByIdAsync(id);
 
-            return bookcase ?? throw new KeyNotFoundException($"Bookcase with ID {id} not found.");
+            return _mapper.Map<BookcaseDto>(bookcase) ?? throw new KeyNotFoundException($"Bookcase with ID {id} not found.");
         }
 
         public async Task<Bookcase> UpdateBookcaseAsync(UpdateBookcaseDto dto)

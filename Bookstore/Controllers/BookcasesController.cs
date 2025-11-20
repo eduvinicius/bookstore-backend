@@ -1,9 +1,7 @@
 ﻿using Bookstore.Api.DTOs;
 using Bookstore.Api.Models;
-using Bookstore.Services;
 using Bookstore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Controllers
 {
@@ -14,7 +12,7 @@ namespace Bookstore.Controllers
         private readonly IBookcasesService _bookcasesService = bookcasesService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bookcase>>> GetBookcases(int page = 0, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<BookcaseDto>>> GetBookcases(int page = 0, int pageSize = 10)
         {
 
             var bookcases = await _bookcasesService.GetAllBookcasesAsync(page, pageSize);
@@ -26,7 +24,7 @@ namespace Bookstore.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Bookcase>> GetBookcase(int id)
+        public async Task<ActionResult<BookcaseDto>> GetBookcase(int id)
         {
             var bookcase = await _bookcasesService.GetBookcaseByIdAsync(id);
 

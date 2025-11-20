@@ -11,6 +11,6 @@ namespace Bookstore.Api.Models
         public string? Location { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
-        public List<Book> Books { get; set; } = new();
+        public List<Book> Books { get; set; } = [];
     }
 }

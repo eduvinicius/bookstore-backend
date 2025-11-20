@@ -4,6 +4,7 @@ using Bookstore.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bookstore.Migrations
 {
     [DbContext(typeof(BookstoreContext))]
-    partial class BookstoreContextModelSnapshot : ModelSnapshot
+    [Migration("20251120124414_FixBookcaseRelation")]
+    partial class FixBookcaseRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +38,9 @@ namespace Bookstore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("BookcaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BookcaseId1")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
@@ -79,6 +85,8 @@ namespace Bookstore.Migrations
 
                     b.HasIndex("BookcaseId");
 
+                    b.HasIndex("BookcaseId1");
+
                     b.ToTable("Books");
                 });
 
@@ -110,10 +118,14 @@ namespace Bookstore.Migrations
 
             modelBuilder.Entity("Bookstore.Api.Models.Book", b =>
                 {
-                    b.HasOne("Bookstore.Api.Models.Bookcase", "Bookcase")
+                    b.HasOne("Bookstore.Api.Models.Bookcase", null)
                         .WithMany("Books")
                         .HasForeignKey("BookcaseId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Bookstore.Api.Models.Bookcase", "Bookcase")
+                        .WithMany()
+                        .HasForeignKey("BookcaseId1");
 
                     b.Navigation("Bookcase");
                 });

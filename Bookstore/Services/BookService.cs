@@ -17,21 +17,23 @@ namespace Bookstore.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Book>> GetAllBooksAsync(int page, int pageSize)
+        public async Task<IEnumerable<BookDto>> GetAllBooksAsync(int page, int pageSize)
         {
-            return await _bookRepository.GetAllAsync(page, pageSize);
+            var books = await _bookRepository.GetAllAsync(page, pageSize);
+            return books.Select(book => _mapper.Map<BookDto>(book));
         }
 
-        public async Task<Book> GetBookByIdAsync(int id)
+        public async Task<BookDto> GetBookByIdAsync(int id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Book with ID {id} not found."); ;
 
-            return book ?? throw new KeyNotFoundException($"Book with ID {id} not found.");
+            return _mapper.Map<BookDto>(book);
         }
 
-        public async Task<IEnumerable<Book>> GetUnassignedBooksAsync()
+        public async Task<IEnumerable<BookDto>> GetUnassignedBooksAsync()
         {
-            return await _bookRepository.GetUnassignedBooksAsync();
+            var books = await _bookRepository.GetUnassignedBooksAsync();
+            return books.Select(book => _mapper.Map<BookDto>(book));
         }
 
         public async Task<Book> CreateBookAsync(CreateBookDto dto)

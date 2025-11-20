@@ -11,6 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        //options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
+
 builder.Services.AddAutoMapper(cfg => {
     cfg.AddProfile<AutoMapperProfile>();
 });

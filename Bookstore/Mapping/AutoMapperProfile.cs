@@ -16,6 +16,8 @@ namespace Bookstore.Mapping
 
             CreateMap<Book, BookDto>();
 
+            CreateMap<Bookcase, BookcaseDto>();
+
             CreateMap<UpdateBookDto, Book>()
                 .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));

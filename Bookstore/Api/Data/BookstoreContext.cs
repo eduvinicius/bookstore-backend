@@ -13,7 +13,7 @@ namespace Bookstore.Api.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>()
-                .HasOne<Bookcase>()
+                .HasOne(b => b.Bookcase)
                 .WithMany(bc => bc.Books)
                 .HasForeignKey(b => b.BookcaseId)
                 .OnDelete(DeleteBehavior.SetNull);
