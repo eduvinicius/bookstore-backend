@@ -1,5 +1,6 @@
 ﻿using Bookstore.Api.DTOs;
 using Bookstore.Api.Models;
+using Bookstore.App.Filters;
 using Bookstore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,10 @@ namespace Bookstore.Controllers
         private readonly IBookcasesService _bookcasesService = bookcasesService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookcaseDto>>> GetBookcases(int page = 0, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<BookcaseDto>>> GetBookcases([FromQuery] BookcaseFilter filter)
         {
 
-            var bookcases = await _bookcasesService.GetAllBookcasesAsync(page, pageSize);
+            var bookcases = await _bookcasesService.GetAllBookcasesAsync(filter);
 
             if (!bookcases.Any())
                 return NotFound("We could not find any bookcase registered");

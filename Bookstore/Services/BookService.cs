@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bookstore.Api.DTOs;
 using Bookstore.Api.Models;
+using Bookstore.App.Filters;
 using Bookstore.Repositories.Interfaces;
 using Bookstore.Services.Interfaces;
 
@@ -17,9 +18,9 @@ namespace Bookstore.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<BookDto>> GetAllBooksAsync(int page, int pageSize)
+        public async Task<IEnumerable<BookDto>> GetAllBooksAsync(BookFilter filter)
         {
-            var books = await _bookRepository.GetAllAsync(page, pageSize);
+            var books = await _bookRepository.GetAllAsync(filter);
             return books.Select(book => _mapper.Map<BookDto>(book));
         }
 
@@ -51,7 +52,6 @@ namespace Bookstore.Services
         {
             var book = await _bookRepository.GetByIdAsync(dto.Id) ?? throw new KeyNotFoundException($"Book with ID {dto.Id} not found.");
                 
-
             _mapper.Map(dto, book);
             _bookRepository.Update(book);
             await _bookRepository.SaveChangesAsync();
@@ -61,10 +61,10 @@ namespace Bookstore.Services
         public async Task<bool> DeleteBookAsync(int id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
+
             if (book == null)
-            {
                 return false;
-            }
+            
             _bookRepository.Delete(book);
             await _bookRepository.SaveChangesAsync();
             return true;

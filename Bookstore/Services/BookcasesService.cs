@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bookstore.Api.DTOs;
 using Bookstore.Api.Models;
+using Bookstore.App.Filters;
 using Bookstore.Repositories.Interfaces;
 using Bookstore.Services.Interfaces;
 
@@ -12,10 +13,17 @@ namespace Bookstore.Services
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<IEnumerable<BookcaseDto>> GetAllBookcasesAsync(int page, int pageSize)
+        public async Task<IEnumerable<BookcaseDto>> GetAllBookcasesAsync(BookcaseFilter filter)
         {
-            var books = await _bookcaseRepository.GetAllAsync(page, pageSize);
+            var books = await _bookcaseRepository.GetAllAsync(filter);
             return books.Select(bookcase => _mapper.Map<BookcaseDto>(bookcase));
+        }
+
+        public async Task<BookcaseDto> GetBookcaseByIdAsync(int id)
+        {
+            var bookcase = await _bookcaseRepository.GetByIdAsync(id);
+
+            return _mapper.Map<BookcaseDto>(bookcase) ?? throw new KeyNotFoundException($"Bookcase with ID {id} not found.");
         }
 
         public async Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto)
@@ -42,13 +50,6 @@ namespace Bookstore.Services
             return bookcase;
         }
 
-        public async Task<BookcaseDto> GetBookcaseByIdAsync(int id)
-        {
-            var bookcase = await _bookcaseRepository.GetByIdAsync(id);
-
-            return _mapper.Map<BookcaseDto>(bookcase) ?? throw new KeyNotFoundException($"Bookcase with ID {id} not found.");
-        }
-
         public async Task<Bookcase> UpdateBookcaseAsync(UpdateBookcaseDto dto)
         {
             var bookcase = await _bookcaseRepository.GetByIdAsync(dto.Id) ?? throw new KeyNotFoundException($"Book with ID {dto.Id} not found.");
@@ -69,9 +70,8 @@ namespace Bookstore.Services
             var bookcase = await _bookcaseRepository.GetByIdAsync(id);
 
             if (bookcase == null)
-            {
                 return false;
-            }
+            
 
             _bookcaseRepository.Delete(bookcase);
             await _bookcaseRepository.SaveChangesAsync();

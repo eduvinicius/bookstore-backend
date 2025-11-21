@@ -2,6 +2,7 @@
 using Bookstore.Services.Interfaces;
 using Bookstore.Api.Models;
 using Bookstore.Api.DTOs;
+using Bookstore.App.Filters;
 
 namespace Bookstore.Controllers
 {
@@ -12,12 +13,12 @@ namespace Bookstore.Controllers
         private readonly IBookService _bookService = bookService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks(int page = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks([FromQuery] BookFilter filter)
         {
-            var books = await _bookService.GetAllBooksAsync(page, pageSize);
+            var books = await _bookService.GetAllBooksAsync(filter);
 
             if (!books.Any())
-                return NotFound();
+                return NotFound("There is no book in the bookstore");
 
             return Ok(books);
         }
@@ -28,7 +29,7 @@ namespace Bookstore.Controllers
             var book = await _bookService.GetBookByIdAsync(id);
 
             if (book == null)
-                return NotFound();
+                return NotFound("The book was not found");
 
             return Ok(book);
         }
@@ -64,7 +65,7 @@ namespace Bookstore.Controllers
             var isDeleted = await _bookService.DeleteBookAsync(id);
 
             if (!isDeleted)
-                return NotFound();
+                return NotFound("The book could not be deleted because it was not found");
 
             return NoContent();
         }

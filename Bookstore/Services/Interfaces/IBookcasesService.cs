@@ -1,5 +1,6 @@
 ﻿using Bookstore.Api.DTOs;
 using Bookstore.Api.Models;
+using Bookstore.App.Filters;
 
 namespace Bookstore.Services.Interfaces
 {
@@ -9,6 +10,6 @@ namespace Bookstore.Services.Interfaces
         Task<Bookcase> UpdateBookcaseAsync(UpdateBookcaseDto dto);
         Task<bool> DeleteBookcaseAsync(int id);
         Task<BookcaseDto> GetBookcaseByIdAsync(int id);
-        Task<IEnumerable<BookcaseDto>> GetAllBookcasesAsync(int page, int pageSize);
+        Task<IEnumerable<BookcaseDto>> GetAllBookcasesAsync(BookcaseFilter filter);
     }
 }
