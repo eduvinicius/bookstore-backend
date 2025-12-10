@@ -7,30 +7,18 @@ using Bookstore.App.Filters;
 
 namespace Bookstore.Repositories
 {
-    public class BookRepository: IBookRepository
+    public class BookRepository : Repository<Book>, IBookRepository
     {
-        private readonly BookstoreContext _context;
+        public BookRepository(BookstoreContext context) : base(context) { }
 
-        public BookRepository(BookstoreContext context)
+        protected override IQueryable<Book> WithIncludes()
         {
-            _context = context;
-        }
-
-        public async Task AddAsync(Book book)
-        {
-            await _context.Books.AddAsync(book);
-        }
-
-        public async Task<Book?> GetByIdAsync(int id)
-        {
-            return await _context.Books
-                .Include(b => b.Bookcase)
-                .FirstOrDefaultAsync(b => b.Id == id);
+            return _dbSet.Include(b => b.Bookcase);
         }
 
         public async Task<IEnumerable<Book>> GetByBookcaseIdAsync(int id)
         {
-            return await _context.Books
+            return await _dbSet
                 .AsNoTracking()
                 .Where(b => b.BookcaseId == id)
                 .Include(b => b.Bookcase)
@@ -39,7 +27,7 @@ namespace Bookstore.Repositories
 
         public async Task<IEnumerable<Book>> GetAllAsync(BookFilter filter)
         {
-            var query = _context.Books
+            var query = _dbSet
                 .AsNoTracking()
                 .Include(b => b.Bookcase)
                 .AsQueryable();
@@ -65,7 +53,7 @@ namespace Bookstore.Repositories
 
         public async Task<IEnumerable<Book>> GetUnassignedBooksAsync()
         {
-            return await _context.Books
+            return await _dbSet
                 .AsNoTracking()
                 .Where(b => b.BookcaseId == null)
                 .Include(b => b.Bookcase)
@@ -74,27 +62,12 @@ namespace Bookstore.Repositories
 
         public async Task<List<Book>> GetByIdsListAsync(List<int> ids)
         {
-            return await _context.Books
+            return await _dbSet
                 .AsNoTracking()
                 .Where(b => ids.Contains(b.Id))
                 .Include(b => b.Bookcase)
                 .ToListAsync();
         }
 
-
-        public void Update(Book book)
-        {
-            _context.Books.Update(book);
-        }
-
-        public void Delete(Book book)
-        {
-            _context.Books.Remove(book);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
     }
 }
