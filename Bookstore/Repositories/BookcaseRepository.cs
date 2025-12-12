@@ -6,30 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Repositories
 {
-    public class BookcaseRepository: IBookcaseRepository
+    public class BookcaseRepository(BookstoreContext context) : Repository<Bookcase>(context), IBookcaseRepository
     {
-        private readonly BookstoreContext _context;
-
-        public BookcaseRepository(BookstoreContext context)
+        protected override IQueryable<Bookcase> WithIncludes()
         {
-            _context = context;
-        }
-
-        public async Task AddAsync(Bookcase bookcase)
-        {
-            await _context.Bookcases.AddAsync(bookcase);
-        }
-
-        public async Task<Bookcase?> GetByIdAsync(int id)
-        {
-            return await _context.Bookcases
-                .Include(bc => bc.Books)
-                .FirstOrDefaultAsync(b => b.Id == id);
+            return _dbSet.Include(bc => bc.Books);
         }
 
         public async Task<IEnumerable<Bookcase>> GetAllAsync(BookcaseFilter filter)
         {
-            var query = _context.Bookcases
+            var query = _dbSet
                 .AsNoTracking()
                 .Include(bc => bc.Books)
                 .AsQueryable();
@@ -44,19 +30,5 @@ namespace Bookstore.Repositories
                 .ToListAsync();
         }
 
-        public void Update(Bookcase bookcase)
-        {
-            _context.Bookcases.Update(bookcase);
-        }
-
-        public void Delete(Bookcase bookcase)
-        {
-            _context.Bookcases.Remove(bookcase);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
     }
 }

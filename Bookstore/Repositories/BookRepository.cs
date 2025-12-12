@@ -7,10 +7,8 @@ using Bookstore.App.Filters;
 
 namespace Bookstore.Repositories
 {
-    public class BookRepository : Repository<Book>, IBookRepository
+    public class BookRepository(BookstoreContext context) : Repository<Book>(context), IBookRepository
     {
-        public BookRepository(BookstoreContext context) : base(context) { }
-
         protected override IQueryable<Book> WithIncludes()
         {
             return _dbSet.Include(b => b.Bookcase);

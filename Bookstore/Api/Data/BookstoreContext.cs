@@ -3,13 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Api.Data
 {
-    public class BookstoreContext : DbContext
+    public class BookstoreContext(DbContextOptions<BookstoreContext> options) : DbContext(options)
     {
-        public BookstoreContext(DbContextOptions<BookstoreContext> options)
-            : base(options)
-        {
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>()

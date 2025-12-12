@@ -6,7 +6,6 @@ using Bookstore.Repositories.Interfaces;
 using Bookstore.Services;
 using Bookstore.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 
 var builder = WebApplication.CreateBuilder(args);
