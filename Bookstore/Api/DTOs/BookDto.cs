@@ -1,6 +1,4 @@
-﻿using Bookstore.Api.Models;
-
-namespace Bookstore.Api.DTOs
+﻿namespace Bookstore.Api.DTOs
 {
     public class BookDto
     {

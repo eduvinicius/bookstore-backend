@@ -1,4 +1,4 @@
-﻿using Bookstore.Api.Models;
+﻿using Bookstore.Domain.Entities;
 
 namespace Bookstore.Api.DTOs
 {
