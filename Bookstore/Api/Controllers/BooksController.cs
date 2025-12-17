@@ -3,6 +3,7 @@ using Bookstore.Api.DTOs;
 using Bookstore.App.Filters;
 using Bookstore.App.Services.Interfaces;
 using Bookstore.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bookstore.Api.Controllers
 {
@@ -12,6 +13,7 @@ namespace Bookstore.Api.Controllers
     {
         private readonly IBookService _bookService = bookService;
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks([FromQuery] BookFilter filter)
         {

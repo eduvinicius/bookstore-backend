@@ -17,5 +17,6 @@ namespace Bookstore.Infrastructure.Data
 
         public DbSet<Book> Books { get; set; } = null!;
         public DbSet<Bookcase> Bookcases { get; set; } = null!;
+        public DbSet<User> Users { get; set; } = null!;
     }
 }

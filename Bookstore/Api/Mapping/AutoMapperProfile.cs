@@ -31,6 +31,9 @@ namespace Bookstore.Api.Mapping
                 .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
+            CreateMap<RegisterDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now));
 
         }
     }
