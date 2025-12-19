@@ -2,6 +2,7 @@ using System.Text;
 using AutoMapper;
 using Bookstore.Api.Mapping;
 using Bookstore.App.Services;
+using Bookstore.App.Services.External;
 using Bookstore.App.Services.Interfaces;
 using Bookstore.Infrastructure.Data;
 using Bookstore.Infrastructure.Repositories;
@@ -85,6 +86,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddHttpClient<IGoogleBooksService, GoogleBooksService>();
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
