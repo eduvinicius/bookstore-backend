@@ -25,6 +25,7 @@ namespace Bookstore.Api.Controllers
             return Ok(books);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDto>> GetBook(int id)
         {
@@ -36,6 +37,7 @@ namespace Bookstore.Api.Controllers
             return Ok(book);
         }
 
+        [Authorize]
         [HttpGet("unassigned")]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetUnassignedBooks()
         {
@@ -44,6 +46,7 @@ namespace Bookstore.Api.Controllers
             return Ok(books);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Book>> CreateBook(CreateBookDto book)
         {
@@ -52,6 +55,7 @@ namespace Bookstore.Api.Controllers
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateBook(UpdateBookDto book)
         {
@@ -61,6 +65,7 @@ namespace Bookstore.Api.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {

@@ -2,6 +2,7 @@
 using Bookstore.App.Filters;
 using Bookstore.App.Services.Interfaces;
 using Bookstore.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bookstore.Api.Controllers
@@ -12,6 +13,7 @@ namespace Bookstore.Api.Controllers
     {
         private readonly IBookcasesService _bookcasesService = bookcasesService;
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookcaseDto>>> GetBookcases([FromQuery] BookcaseFilter filter)
         {
@@ -24,6 +26,7 @@ namespace Bookstore.Api.Controllers
             return Ok(bookcases);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<BookcaseDto>> GetBookcase(int id)
         {
@@ -35,6 +38,7 @@ namespace Bookstore.Api.Controllers
             return bookcase;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Bookcase>> CreateBookcase(CreateBookcaseDto bookcase)
         {
@@ -43,6 +47,7 @@ namespace Bookstore.Api.Controllers
             return CreatedAtAction(nameof(GetBookcase), new { id = bookcase.Id }, bookcase);
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateBookcase(UpdateBookcaseDto bookcase)
         {
@@ -52,6 +57,7 @@ namespace Bookstore.Api.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookcase(int id)
         {
