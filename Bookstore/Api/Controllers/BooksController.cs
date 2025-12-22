@@ -1,17 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Bookstore.Api.DTOs;
+﻿using Bookstore.Api.DTOs;
 using Bookstore.App.Filters;
+using Bookstore.App.Services;
 using Bookstore.App.Services.Interfaces;
 using Bookstore.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bookstore.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BooksController(IBookService bookService) : ControllerBase
+    public class BooksController(
+        IBookService bookService, 
+        IBookImportService bookImportSeervice
+        ) : ControllerBase
     {
         private readonly IBookService _bookService = bookService;
+        private readonly IBookImportService _bookImportService = bookImportSeervice;
 
         [Authorize]
         [HttpGet]
@@ -51,6 +56,15 @@ namespace Bookstore.Api.Controllers
         public async Task<ActionResult<Book>> CreateBook(CreateBookDto book)
         {
             await _bookService.CreateBookAsync(book);
+
+            return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
+        }
+
+        [Authorize]
+        [HttpPost("import/google/{googleBookId}")]
+        public async Task<ActionResult<BookDto>> ImportFromGoogle(string googleBookId)
+        {
+            var book = await _bookImportService.ImportFromGoogleAsync(googleBookId);
 
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }

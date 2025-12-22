@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bookstore.Api.DTOs;
+using Bookstore.Api.DTOs.External;
 using Bookstore.Domain.Entities;
 
 namespace Bookstore.Api.Mapping
@@ -34,6 +35,19 @@ namespace Bookstore.Api.Mapping
             CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now));
+
+            CreateMap<GoogleBookDto, CreateBookDto>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Author,
+                    opt => opt.MapFrom(src => string.Join(", ", src.Authors)))
+                .ForMember(dest => dest.Year,
+                    opt => opt.MapFrom(src => src.PublishedYear ?? 0))
+                .ForMember(dest => dest.ThumbnailUrl,
+                    opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dest => dest.Genre,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.IsRead,
+                    opt => opt.MapFrom(_ => false));
 
         }
     }

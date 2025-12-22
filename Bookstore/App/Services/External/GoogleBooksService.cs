@@ -64,7 +64,49 @@ namespace Bookstore.App.Services.External
             }
 
             return result;
-
         }
+
+        public async Task<GoogleBookDto?> GetByIdAsync(string googleBookId)
+        {
+            var apiKey = _configuration["GoogleBooks:ApiKey"];
+            var baseUrl = _configuration["GoogleBooks:BaseUrl"];
+
+            var url = $"{baseUrl}volumes/{googleBookId}";
+
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            using var document = JsonDocument.Parse(json);
+            var volumeInfo = document.RootElement.GetProperty("volumeInfo");
+
+            return new GoogleBookDto
+            {
+                Id = googleBookId,
+                Title = volumeInfo.GetProperty("title").GetString()!,
+                Authors = volumeInfo.TryGetProperty("authors", out var authors)
+                    ? authors.EnumerateArray().Select(a => a.GetString()!).ToList()
+                    : [],
+                Description = volumeInfo.TryGetProperty("description", out var desc)
+                    ? desc.GetString()
+                    : null,
+                Thumbnail = volumeInfo.TryGetProperty("imageLinks", out var images)
+                        && images.TryGetProperty("thumbnail", out var thumb)
+                        ? thumb.GetString()
+                        : null,
+                PublishedYear = volumeInfo.TryGetProperty("publishedDate", out var date)
+                    && int.TryParse(date.GetString()?.Substring(0, 4), out var year)
+                    ? year
+                    : null,
+                PageCount = volumeInfo.TryGetProperty("pageCount", out var pageCount)
+                        ? pageCount.GetInt32()
+                        : null,
+                Language = volumeInfo.TryGetProperty("language", out var lang)
+                        ? lang.GetString()
+                        : null
+            };
+        }
+
     }
 }

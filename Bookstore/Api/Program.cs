@@ -97,6 +97,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookcasesService, BookcasesService>();
+builder.Services.AddScoped<IBookImportService, BookImportService>();
 
 var app = builder.Build();
 
