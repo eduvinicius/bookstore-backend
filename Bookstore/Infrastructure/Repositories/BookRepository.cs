@@ -43,6 +43,7 @@ namespace Bookstore.Infrastructure.Repositories
                 query = query.Where(b => b.IsRead == filter.IsRead.Value);
 
             return await query
+                .Where(b => filter.UserId == b.UserId)
                 .OrderBy(b => b.CreatedDate)
                 .Skip(filter.Page)
                 .Take(filter.PageSize)

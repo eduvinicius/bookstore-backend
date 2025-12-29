@@ -27,5 +27,7 @@ namespace Bookstore.Domain.Entities
         public int Age { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginDate { get; set; }
+        public ICollection<Bookcase> Bookcases { get; set; } = [];
+        public ICollection<Book> Books { get; set; } = [];
     }
 }

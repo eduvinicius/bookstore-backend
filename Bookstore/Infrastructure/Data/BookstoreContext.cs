@@ -7,6 +7,19 @@ namespace Bookstore.Infrastructure.Data
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Bookcase>()
+                .HasOne(bc => bc.User)
+                .WithMany(u => u.Bookcases)
+                .HasForeignKey(bc => bc.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Book>()
+                .HasOne(b => b.User)
+                .WithMany(u => u.Books)
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Book>()
                 .HasOne(b => b.Bookcase)
                 .WithMany(bc => bc.Books)

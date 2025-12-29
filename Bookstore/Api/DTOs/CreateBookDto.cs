@@ -19,5 +19,6 @@ namespace Bookstore.Api.DTOs
         public string? Description { get; set; }
         public string? ThumbnailUrl { get; set; }
         public int? BookcaseId { get; set; }
+        public int UserId { get; set; }
     }
 }

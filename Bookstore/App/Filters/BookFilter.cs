@@ -6,5 +6,6 @@
         public string? Author { get; set; }
         public string? Genre { get; set; }
         public bool? IsRead { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -24,6 +24,7 @@ namespace Bookstore.Infrastructure.Repositories
                 query = query.Where(bc => bc.Name.Contains(filter.Name));
 
             return await query
+                .Where(bc => filter.UserId == bc.UserId)
                 .OrderBy(bc => bc.Id)
                 .Skip(filter.Page)
                 .Take(filter.PageSize)

@@ -9,14 +9,20 @@ namespace Bookstore.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BookcasesController(IBookcasesService bookcasesService) : ControllerBase
+    public class BookcasesController(
+        IBookcasesService bookcasesService,
+        ICurrentUserService currentUserService
+        ) : ControllerBase
     {
         private readonly IBookcasesService _bookcasesService = bookcasesService;
+        private readonly ICurrentUserService _currentUserService = currentUserService;
 
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookcaseDto>>> GetBookcases([FromQuery] BookcaseFilter filter)
         {
+
+            filter.UserId = this._currentUserService.UserId;
 
             var bookcases = await _bookcasesService.GetAllBookcasesAsync(filter);
 
@@ -42,7 +48,10 @@ namespace Bookstore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Bookcase>> CreateBookcase(CreateBookcaseDto bookcase)
         {
-            await _bookcasesService.CreateBookcaseAsync(bookcase);
+
+            var userId = this._currentUserService.UserId;
+
+            await _bookcasesService.CreateBookcaseAsync(bookcase, userId);
 
             return CreatedAtAction(nameof(GetBookcase), new { id = bookcase.Id }, bookcase);
         }

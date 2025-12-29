@@ -25,9 +25,10 @@ namespace Bookstore.App.Services
             return _mapper.Map<BookcaseDto>(bookcase) ?? throw new KeyNotFoundException($"Bookcase with ID {id} not found.");
         }
 
-        public async Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto)
+        public async Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto, int userId)
         {
             var bookcase = _mapper.Map<Bookcase>(dto);
+            bookcase.UserId = userId;
 
             if (dto.BookIds?.Count > 0)
             {

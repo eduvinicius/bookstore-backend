@@ -12,16 +12,20 @@ namespace Bookstore.Api.Controllers
     [Route("api/[controller]")]
     public class BooksController(
         IBookService bookService, 
-        IBookImportService bookImportSeervice
+        IBookImportService bookImportSeervice,
+        ICurrentUserService currentUserService
         ) : ControllerBase
     {
         private readonly IBookService _bookService = bookService;
         private readonly IBookImportService _bookImportService = bookImportSeervice;
+        private readonly ICurrentUserService _currentUserService = currentUserService;
 
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks([FromQuery] BookFilter filter)
         {
+            filter.UserId = _currentUserService.UserId;
+
             var books = await _bookService.GetAllBooksAsync(filter);
 
             if (!books.Any())
@@ -55,6 +59,8 @@ namespace Bookstore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> CreateBook(CreateBookDto book)
         {
+            book.UserId = _currentUserService.UserId;
+
             await _bookService.CreateBookAsync(book);
 
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
@@ -62,9 +68,11 @@ namespace Bookstore.Api.Controllers
 
         [Authorize]
         [HttpPost("import/google/{googleBookId}")]
-        public async Task<ActionResult<BookDto>> ImportFromGoogle(string googleBookId)
+        public async Task<ActionResult<BookDto>> ImportFromGoogle(string googleBookId, int? bookcaseId)
         {
-            var book = await _bookImportService.ImportFromGoogleAsync(googleBookId);
+            var userId = _currentUserService.UserId;
+
+            var book = await _bookImportService.ImportFromGoogleAsync(googleBookId, bookcaseId, userId);
 
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }

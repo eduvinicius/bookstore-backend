@@ -6,7 +6,7 @@ namespace Bookstore.App.Services.Interfaces
 {
     public interface IBookcasesService
     {
-        Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto);
+        Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto, int userId);
         Task<Bookcase> UpdateBookcaseAsync(UpdateBookcaseDto dto);
         Task<bool> DeleteBookcaseAsync(int id);
         Task<BookcaseDto> GetBookcaseByIdAsync(int id);

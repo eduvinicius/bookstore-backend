@@ -4,6 +4,6 @@ namespace Bookstore.App.Services.Interfaces
 {
     public interface IBookImportService
     {
-        Task<Book> ImportFromGoogleAsync(string googleBookId);
+        Task<Book> ImportFromGoogleAsync(string googleBookId, int? bookcaseId, int userId);
     }
 }

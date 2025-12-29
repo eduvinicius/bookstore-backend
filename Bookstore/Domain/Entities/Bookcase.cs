@@ -11,6 +11,8 @@ namespace Bookstore.Domain.Entities
         public string? Location { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
+        public int? UserId { get; set; }
+        public User? User { get; set; } = null!;
         public List<Book> Books { get; set; } = [];
     }
 }
