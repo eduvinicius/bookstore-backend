@@ -2,6 +2,7 @@
 using Bookstore.Api.DTOs;
 using Bookstore.App.Services.Interfaces;
 using Bookstore.Domain.Entities;
+using Bookstore.Domain.Exceptions;
 
 namespace Bookstore.App.Services
 {
@@ -16,7 +17,8 @@ namespace Bookstore.App.Services
 
         public async Task<Book> ImportFromGoogleAsync(string googleBookId, int? bookcaseId, int userId)
         {
-            var googleBook = await _googleBooksService.GetByIdAsync(googleBookId) ?? throw new Exception("Book not found on Google");
+            var googleBook = await _googleBooksService.GetByIdAsync(googleBookId)
+                ?? throw new NotFoundException($"Book with Google ID '{googleBookId}' not found on Google Books API.");
 
             var createBookDto = _mapper.Map<CreateBookDto>(googleBook);
             createBookDto.UserId = userId;

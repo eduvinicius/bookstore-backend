@@ -39,10 +39,6 @@ namespace Bookstore.Api.Controllers
         public async Task<ActionResult<BookDto>> GetBook(int id)
         {
             var book = await _bookService.GetBookByIdAsync(id);
-
-            if (book == null)
-                return NotFound("The book was not found");
-
             return Ok(book);
         }
 
@@ -91,11 +87,7 @@ namespace Bookstore.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var isDeleted = await _bookService.DeleteBookAsync(id);
-
-            if (!isDeleted)
-                return NotFound("The book could not be deleted because it was not found");
-
+            await _bookService.DeleteBookAsync(id);
             return NoContent();
         }
     }

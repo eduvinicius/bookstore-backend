@@ -3,6 +3,7 @@ using Bookstore.Api.DTOs;
 using Bookstore.App.Filters;
 using Bookstore.App.Services.Interfaces;
 using Bookstore.Domain.Entities;
+using Bookstore.Domain.Exceptions;
 using Bookstore.Infrastructure.Repositories.Interfaces;
 
 namespace Bookstore.App.Services
@@ -20,9 +21,10 @@ namespace Bookstore.App.Services
 
         public async Task<BookcaseDto> GetBookcaseByIdAsync(int id)
         {
-            var bookcase = await _unitOfWork.Bookcases.GetByIdAsync(id);
+            var bookcase = await _unitOfWork.Bookcases.GetByIdAsync(id)
+                ?? throw new NotFoundException("Bookcase", id);
 
-            return _mapper.Map<BookcaseDto>(bookcase) ?? throw new KeyNotFoundException($"Bookcase with ID {id} not found.");
+            return _mapper.Map<BookcaseDto>(bookcase);
         }
 
         public async Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto, int userId)
@@ -36,9 +38,8 @@ namespace Bookstore.App.Services
 
                 foreach (var book in books)
                 {
-
                     if (book.BookcaseId != null)
-                        throw new Exception($"Book {book.Id} is already in another bookcase.");
+                        throw new ConflictException($"Book '{book.Title}' is already in another bookcase.");
                 }
 
                 bookcase.Books = books;
@@ -52,7 +53,8 @@ namespace Bookstore.App.Services
 
         public async Task<Bookcase> UpdateBookcaseAsync(UpdateBookcaseDto dto)
         {
-            var bookcase = await _unitOfWork.Bookcases.GetByIdAsync(dto.Id) ?? throw new KeyNotFoundException($"Book with ID {dto.Id} not found.");
+            var bookcase = await _unitOfWork.Bookcases.GetByIdAsync(dto.Id)
+                ?? throw new NotFoundException("Bookcase", dto.Id);
 
             _mapper.Map(dto, bookcase);
 
@@ -65,18 +67,13 @@ namespace Bookstore.App.Services
             return bookcase;
         }
 
-        public async Task<bool> DeleteBookcaseAsync(int id)
+        public async Task DeleteBookcaseAsync(int id)
         {
-            var bookcase = await _unitOfWork.Bookcases.GetByIdAsync(id);
-
-            if (bookcase == null)
-                return false;
-
+            var bookcase = await _unitOfWork.Bookcases.GetByIdAsync(id)
+                ?? throw new NotFoundException("Bookcase", id);
 
             _unitOfWork.Bookcases.Delete(bookcase);
             await _unitOfWork.SaveChangesAsync();
-
-            return true;
         }
     }
 }

@@ -11,6 +11,7 @@ using Bookstore.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Bookstore.Api.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -88,20 +89,25 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IGoogleBooksService, GoogleBooksService>();
+
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookcaseRepository, BookcaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookcasesService, BookcasesService>();
 builder.Services.AddScoped<IBookImportService, BookImportService>();
 
 var app = builder.Build();
+
+// IMPORTANTE: Middleware de exceção DEVE vir primeiro
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

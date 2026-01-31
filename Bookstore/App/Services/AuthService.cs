@@ -4,6 +4,7 @@ using Bookstore.App.Services.Interfaces;
 using Bookstore.Domain.Entities;
 using Bookstore.Infrastructure.Repositories.Interfaces;
 using Bookstore.Infrastructure.Security;
+using Bookstore.Domain.Exceptions;
 
 namespace Bookstore.App.Services
 {
@@ -21,7 +22,7 @@ namespace Bookstore.App.Services
         public async Task RegisterAsync(RegisterDto dto)
         {
             if (await _userRepo.GetByEmailAsync(dto.Email) != null)
-                throw new Exception("Email already registered.");
+                throw new ConflictException("Email already registered.");
 
             var user = _mapper.Map<User>(dto);
 
@@ -32,10 +33,10 @@ namespace Bookstore.App.Services
         public async Task<string> LoginAsync(LoginDto dto)
         {
             var user = await _userRepo.GetByEmailAsync(dto.Email)
-                ?? throw new Exception("Invalid credentials.");
+                ?? throw new BadRequestException("Invalid credentials.");
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                throw new Exception("Invalid credentials.");
+                throw new BadRequestException("Invalid credentials.");
 
             return _jwt.GenerateToken(user);
         }

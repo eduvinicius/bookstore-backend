@@ -37,11 +37,7 @@ namespace Bookstore.Api.Controllers
         public async Task<ActionResult<BookcaseDto>> GetBookcase(int id)
         {
             var bookcase = await _bookcasesService.GetBookcaseByIdAsync(id);
-
-            if (bookcase == null)
-                return NotFound("We could not find the bookcase");
-
-            return bookcase;
+            return Ok(bookcase);
         }
 
         [Authorize]
@@ -70,11 +66,7 @@ namespace Bookstore.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookcase(int id)
         {
-            var isDeleted = await _bookcasesService.DeleteBookcaseAsync(id);
-
-            if (!isDeleted)
-                return NotFound("We could not find the bookcase");
-
+            await _bookcasesService.DeleteBookcaseAsync(id);
             return NoContent();
         }
     }

@@ -8,7 +8,7 @@ namespace Bookstore.App.Services.Interfaces
     {
         Task<Bookcase> CreateBookcaseAsync(CreateBookcaseDto dto, int userId);
         Task<Bookcase> UpdateBookcaseAsync(UpdateBookcaseDto dto);
-        Task<bool> DeleteBookcaseAsync(int id);
+        Task DeleteBookcaseAsync(int id);
         Task<BookcaseDto> GetBookcaseByIdAsync(int id);
         Task<IEnumerable<BookcaseDto>> GetAllBookcasesAsync(BookcaseFilter filter);
     }

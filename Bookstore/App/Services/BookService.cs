@@ -3,6 +3,7 @@ using Bookstore.Api.DTOs;
 using Bookstore.App.Filters;
 using Bookstore.App.Services.Interfaces;
 using Bookstore.Domain.Entities;
+using Bookstore.Domain.Exceptions;
 using Bookstore.Infrastructure.Repositories.Interfaces;
 
 namespace Bookstore.App.Services
@@ -20,7 +21,8 @@ namespace Bookstore.App.Services
 
         public async Task<BookDto> GetBookByIdAsync(int id)
         {
-            var book = await _unitOfWork.Books.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Book with ID {id} not found."); ;
+            var book = await _unitOfWork.Books.GetByIdAsync(id)
+                ?? throw new NotFoundException("Book", id);
 
             return _mapper.Map<BookDto>(book);
         }
@@ -44,7 +46,8 @@ namespace Bookstore.App.Services
 
         public async Task<Book> UpdateBookAsync(UpdateBookDto dto)
         {
-            var book = await _unitOfWork.Books.GetByIdAsync(dto.Id) ?? throw new KeyNotFoundException($"Book with ID {dto.Id} not found.");
+            var book = await _unitOfWork.Books.GetByIdAsync(dto.Id)
+                ?? throw new NotFoundException("Book", dto.Id);
                 
             _mapper.Map(dto, book);
             _unitOfWork.Books.Update(book);
@@ -52,16 +55,13 @@ namespace Bookstore.App.Services
             return book;
         }
 
-        public async Task<bool> DeleteBookAsync(int id)
+        public async Task DeleteBookAsync(int id)
         {
-            var book = await _unitOfWork.Books.GetByIdAsync(id);
-
-            if (book == null)
-                return false;
+            var book = await _unitOfWork.Books.GetByIdAsync(id)
+                ?? throw new NotFoundException("Book", id);
             
             _unitOfWork.Books.Delete(book);
             await _unitOfWork.Books.SaveChangesAsync();
-            return true;
         }
 
 
