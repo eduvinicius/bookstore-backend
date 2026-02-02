@@ -13,12 +13,14 @@ namespace Bookstore.Api.Controllers
     public class BooksController(
         IBookService bookService, 
         IBookImportService bookImportSeervice,
-        ICurrentUserService currentUserService
+        ICurrentUserService currentUserService,
+        ILogger<BooksController> logger
         ) : ControllerBase
     {
         private readonly IBookService _bookService = bookService;
         private readonly IBookImportService _bookImportService = bookImportSeervice;
         private readonly ICurrentUserService _currentUserService = currentUserService;
+        private readonly ILogger<BooksController> _logger = logger;
 
         [Authorize]
         [HttpGet]
@@ -29,8 +31,12 @@ namespace Bookstore.Api.Controllers
             var books = await _bookService.GetAllBooksAsync(filter);
 
             if (!books.Any())
+            {
+                _logger.LogInformation("No books found for user {UserId}", filter.UserId);
                 return NotFound("There is no book in the bookstore");
+            }
 
+            _logger.LogInformation("Returning {Count} books for user {UserId}", books.Count(), filter.UserId);
             return Ok(books);
         }
 
